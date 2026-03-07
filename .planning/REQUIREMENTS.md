@@ -15,11 +15,11 @@ Requirements for initial release. Includes all table stakes + differentiators.
 
 ### Email Fetching
 
-- [ ] **FETCH-01**: Fetch unread emails via Gmail API with pagination support
-- [ ] **FETCH-02**: Processing window — only process emails from configurable time period (default: 24h)
-- [ ] **FETCH-03**: Configurable email fields sent to LLM (subject, sender, body snippet)
-- [ ] **FETCH-04**: Configurable body snippet length limit to control token usage
-- [ ] **FETCH-05**: Conservative behavior enforced — never mark as read, never archive, never delete
+- [x] **FETCH-01**: Fetch unread emails via Gmail API with pagination support
+- [x] **FETCH-02**: Processing window — only process emails from configurable time period (default: 24h)
+- [x] **FETCH-03**: Configurable email fields sent to LLM (subject, sender, body snippet)
+- [x] **FETCH-04**: Configurable body snippet length limit to control token usage
+- [x] **FETCH-05**: Conservative behavior enforced — never mark as read, never archive, never delete
 
 ### Configuration
 
@@ -96,11 +96,11 @@ Explicitly excluded. Documented to prevent scope creep.
 | AUTH-01 | Phase 1 | Complete |
 | AUTH-02 | Phase 1 | Complete |
 | AUTH-03 | Phase 1 | Complete |
-| FETCH-01 | Phase 1 | Pending |
-| FETCH-02 | Phase 1 | Pending |
-| FETCH-03 | Phase 1 | Pending |
-| FETCH-04 | Phase 1 | Pending |
-| FETCH-05 | Phase 1 | Pending |
+| FETCH-01 | Phase 1 | Complete |
+| FETCH-02 | Phase 1 | Complete |
+| FETCH-03 | Phase 1 | Complete |
+| FETCH-04 | Phase 1 | Complete |
+| FETCH-05 | Phase 1 | Complete |
 | CONF-01 | Phase 1 | Complete |
 | CONF-02 | Phase 1 | Complete |
 | CONF-03 | Phase 1 | Complete |
@@ -130,4 +130,4 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after roadmap creation*
+*Last updated: 2026-03-07 after Phase 1 completion*

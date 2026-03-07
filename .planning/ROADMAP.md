@@ -12,7 +12,7 @@ Gmail Auto-Triage evolves from a bare project into a fully automated email class
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - OAuth2 auth, Gmail API fetch, YAML config loading and validation, project scaffolding
+- [x] **Phase 1: Foundation** - OAuth2 auth, Gmail API fetch, YAML config loading and validation, project scaffolding
 - [ ] **Phase 2: Classification** - LLM-based email classification, Gmail label application, idempotency, dry-run mode
 - [ ] **Phase 3: Operability** - Summary notifications, cron wrapper, structured logging, rate limiting, error resilience
 
@@ -31,9 +31,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project scaffolding, data models, and YAML config loading with strict validation
-- [ ] 01-02-PLAN.md — OAuth2 authentication, token persistence, automatic refresh, and output utilities
-- [ ] 01-03-PLAN.md — Gmail email fetching with pagination, time window filtering, and CLI integration
+- [x] 01-01-PLAN.md — Project scaffolding, data models, and YAML config loading with strict validation
+- [x] 01-02-PLAN.md — OAuth2 authentication, token persistence, automatic refresh, and output utilities
+- [x] 01-03-PLAN.md — Gmail email fetching with pagination, time window filtering, and CLI integration
 
 ### Phase 2: Classification
 **Goal**: User's unread emails are classified by an LLM and labeled in Gmail — the core value loop works end-to-end
@@ -75,6 +75,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/3 | In Progress | - |
+| 1. Foundation | 3/3 | Complete | 2026-03-07 |
 | 2. Classification | 0/3 | Not started | - |
 | 3. Operability | 0/2 | Not started | - |
