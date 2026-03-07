@@ -1,0 +1,38 @@
+categories:
+  - name: Newsletter
+    description: "Periodic newsletters, digests, and content subscriptions"
+    examples:
+      - "Your weekly Python digest"
+      - "Monthly tech roundup from TechCrunch"
+      - "New post on Substack: AI trends"
+
+  - name: Finance
+    description: "Banking notifications, invoices, receipts, and financial statements"
+    examples:
+      - "Your credit card statement is ready"
+      - "Payment received: Invoice #1234"
+      - "Monthly account summary from Chase"
+
+  - name: Social
+    description: "Social media notifications and community updates"
+    examples:
+      - "John mentioned you in a comment"
+      - "You have 5 new followers on LinkedIn"
+      - "New activity in your GitHub repository"
+
+  - name: Shopping
+    description: "Order confirmations, shipping updates, and promotional offers"
+    examples:
+      - "Your Amazon order has shipped"
+      - "Order confirmed: #AMZ-9876"
+      - "Flash sale: 50% off electronics"
+
+# Fetch settings (uncomment to override defaults)
+# fetch:
+#   processing_window_hours: 24   # How far back to look for emails
+#   max_emails: 100               # Maximum emails to process per run
+#   snippet_length: 500           # Max characters in email snippet
+#   fields:                       # Fields to use for classification
+#     - subject
+#     - sender
+#     - snippet
