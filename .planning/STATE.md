@@ -10,30 +10,30 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 ## Current Position
 
 Phase: 1 of 3 (Foundation)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: Executing
-Last activity: 2026-03-07 — Completed 01-01-PLAN.md (scaffolding, models, config)
+Last activity: 2026-03-07 — Completed 01-02-PLAN.md (OAuth2 auth, token persistence, output utilities)
 
-Progress: [█░░░░░░░░░] 12%
+Progress: [██░░░░░░░░] 25%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 5 min
-- Total execution time: 0.08 hours
+- Total plans completed: 2
+- Average duration: 4 min
+- Total execution time: 0.13 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 1/3 | 5 min | 5 min |
+| 1. Foundation | 2/3 | 8 min | 4 min |
 | 2. Classification | 0/3 | - | - |
 | 3. Operability | 0/2 | - | - |
 
 **Recent Trend:**
-- Last 5 plans: 5min
-- Trend: baseline
+- Last 5 plans: 5min, 3min
+- Trend: improving
 
 *Updated after each plan completion*
 
@@ -49,6 +49,9 @@ Recent decisions affecting current work:
 - [01-01]: Python 3.11 pinned (requires-python >= 3.11) for broad compatibility
 - [01-01]: EmailData as plain dataclass (not pydantic) since it represents API response data, not validated config
 - [01-01]: CONF-04 not implemented (no prompt template override) per user decision
+- [01-02]: gmail.modify single scope from the start (avoids re-authorization when labeling is added in Phase 2)
+- [01-02]: Token saved with 0o600 permissions for security (Pitfall #6)
+- [01-02]: Errors/warnings to stderr, info/success to stdout (keeps stdout clean for piping)
 
 ### Pending Todos
 
@@ -63,5 +66,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: Completed 01-01-PLAN.md
-Resume file: .planning/phases/01-foundation/01-01-SUMMARY.md
+Stopped at: Completed 01-02-PLAN.md
+Resume file: .planning/phases/01-foundation/01-02-SUMMARY.md

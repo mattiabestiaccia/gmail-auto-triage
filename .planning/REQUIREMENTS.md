@@ -9,9 +9,9 @@ Requirements for initial release. Includes all table stakes + differentiators.
 
 ### Authentication
 
-- [ ] **AUTH-01**: OAuth2 authentication with token persistence across cron runs
-- [ ] **AUTH-02**: Automatic token refresh without user intervention
-- [ ] **AUTH-03**: One-time interactive setup for initial OAuth2 authorization
+- [x] **AUTH-01**: OAuth2 authentication with token persistence across cron runs
+- [x] **AUTH-02**: Automatic token refresh without user intervention
+- [x] **AUTH-03**: One-time interactive setup for initial OAuth2 authorization
 
 ### Email Fetching
 
@@ -93,9 +93,9 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
 | FETCH-01 | Phase 1 | Pending |
 | FETCH-02 | Phase 1 | Pending |
 | FETCH-03 | Phase 1 | Pending |
