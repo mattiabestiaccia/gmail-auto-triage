@@ -1,2 +1,3 @@
-def main() -> None:
-    print("Hello from email-triage!")
+from email_triage.cli import main
+
+__all__ = ["main"]
