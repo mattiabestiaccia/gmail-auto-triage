@@ -28,12 +28,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Running the script for the first time launches an interactive browser-based OAuth2 authorization flow
   4. The script fetches unread emails from Gmail with pagination, respecting a configurable time window (default 24h), and never marks emails as read, archives, or deletes them
   5. A `categories.yaml` file with categories (name, description, examples) is loaded and validated at startup; malformed config causes an immediate exit with a clear error message
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md — Project scaffolding, data models, and YAML config loading with strict validation
+- [ ] 01-02-PLAN.md — OAuth2 authentication, token persistence, automatic refresh, and output utilities
+- [ ] 01-03-PLAN.md — Gmail email fetching with pagination, time window filtering, and CLI integration
 
 ### Phase 2: Classification
 **Goal**: User's unread emails are classified by an LLM and labeled in Gmail — the core value loop works end-to-end
