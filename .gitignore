@@ -1,0 +1,19 @@
+# Credentials and secrets
+credentials/
+token.json
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+
+# Virtual environment
+.venv/
+
+# Tools cache
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
