@@ -23,10 +23,10 @@ Requirements for initial release. Includes all table stakes + differentiators.
 
 ### Configuration
 
-- [ ] **CONF-01**: Categories defined in YAML file with name and description
-- [ ] **CONF-02**: Category examples in config for few-shot LLM prompting
-- [ ] **CONF-03**: Config validation on startup with clear error messages (fail fast)
-- [ ] **CONF-04**: Custom LLM prompt template override in config
+- [x] **CONF-01**: Categories defined in YAML file with name and description
+- [x] **CONF-02**: Category examples in config for few-shot LLM prompting
+- [x] **CONF-03**: Config validation on startup with clear error messages (fail fast)
+- [x] **CONF-04**: Custom LLM prompt template override in config
 
 ### Classification
 
@@ -101,10 +101,10 @@ Explicitly excluded. Documented to prevent scope creep.
 | FETCH-03 | Phase 1 | Pending |
 | FETCH-04 | Phase 1 | Pending |
 | FETCH-05 | Phase 1 | Pending |
-| CONF-01 | Phase 1 | Pending |
-| CONF-02 | Phase 1 | Pending |
-| CONF-03 | Phase 1 | Pending |
-| CONF-04 | Phase 1 | Pending |
+| CONF-01 | Phase 1 | Complete |
+| CONF-02 | Phase 1 | Complete |
+| CONF-03 | Phase 1 | Complete |
+| CONF-04 | Phase 1 | Complete |
 | CLASS-01 | Phase 2 | Pending |
 | CLASS-02 | Phase 2 | Pending |
 | CLASS-03 | Phase 2 | Pending |
