@@ -32,11 +32,19 @@ class FetchConfig(BaseModel):
     fields: list[str] = ["subject", "sender", "snippet"]
 
 
+class ClassificationConfig(BaseModel):
+    """Classification settings."""
+
+    confidence_threshold: float = 0.5
+    model: str = "gemini-2.5-flash"
+
+
 class AppConfig(BaseModel):
     """Top-level application configuration."""
 
     categories: list[CategoryConfig]
     fetch: FetchConfig = FetchConfig()
+    classification: ClassificationConfig = ClassificationConfig()
 
     @field_validator("categories")
     @classmethod
