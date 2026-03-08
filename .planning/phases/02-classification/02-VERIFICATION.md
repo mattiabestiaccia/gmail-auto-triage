@@ -1,5 +1,5 @@
 ---
-status: human_needed
+status: passed
 phase: 02-classification
 goal: "User's unread emails are classified by an LLM and labeled in Gmail — the core value loop works end-to-end"
 score: 5/5
