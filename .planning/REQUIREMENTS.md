@@ -30,18 +30,18 @@ Requirements for initial release. Includes all table stakes + differentiators.
 
 ### Classification
 
-- [ ] **CLASS-01**: LLM-based classification using Gemini Flash with structured JSON output
-- [ ] **CLASS-02**: Fallback "ambiguous" label for unclassifiable emails
-- [ ] **CLASS-03**: LLM confidence score threshold — below threshold maps to ambiguous
-- [ ] **CLASS-04**: Multi-label support (email can receive 1-2 category labels)
-- [ ] **CLASS-05**: Thread-aware classification (classify by conversation thread, not individual messages)
+- [x] **CLASS-01**: LLM-based classification using Gemini Flash with structured JSON output
+- [x] **CLASS-02**: Fallback "ambiguous" label for unclassifiable emails
+- [x] **CLASS-03**: LLM confidence score threshold — below threshold maps to ambiguous
+- [x] **CLASS-04**: Multi-label support (email can receive 1-2 category labels)
+- [x] **CLASS-05**: Thread-aware classification (classify by conversation thread, not individual messages)
 
 ### Label Management
 
-- [ ] **LABL-01**: Apply Gmail labels based on classification result
-- [ ] **LABL-02**: Auto-create labels in Gmail if they don't exist
-- [ ] **LABL-03**: Label namespacing with configurable prefix (e.g., `AutoTriage/`)
-- [ ] **LABL-04**: Idempotency — skip emails already bearing any triage label
+- [x] **LABL-01**: Apply Gmail labels based on classification result
+- [x] **LABL-02**: Auto-create labels in Gmail if they don't exist
+- [x] **LABL-03**: Label namespacing with configurable prefix (e.g., `AutoTriage/`)
+- [x] **LABL-04**: Idempotency — skip emails already bearing any triage label
 
 ### Operability
 
@@ -105,15 +105,15 @@ Explicitly excluded. Documented to prevent scope creep.
 | CONF-02 | Phase 1 | Complete |
 | CONF-03 | Phase 1 | Complete |
 | CONF-04 | Phase 1 | Complete |
-| CLASS-01 | Phase 2 | Pending |
-| CLASS-02 | Phase 2 | Pending |
-| CLASS-03 | Phase 2 | Pending |
-| CLASS-04 | Phase 2 | Pending |
-| CLASS-05 | Phase 2 | Pending |
-| LABL-01 | Phase 2 | Pending |
-| LABL-02 | Phase 2 | Pending |
-| LABL-03 | Phase 2 | Pending |
-| LABL-04 | Phase 2 | Pending |
+| CLASS-01 | Phase 2 | Complete |
+| CLASS-02 | Phase 2 | Complete |
+| CLASS-03 | Phase 2 | Complete |
+| CLASS-04 | Phase 2 | Complete |
+| CLASS-05 | Phase 2 | Complete |
+| LABL-01 | Phase 2 | Complete |
+| LABL-02 | Phase 2 | Complete |
+| LABL-03 | Phase 2 | Complete |
+| LABL-04 | Phase 2 | Complete |
 | OPS-06 | Phase 2 | Pending |
 | OPS-01 | Phase 3 | Pending |
 | OPS-02 | Phase 3 | Pending |

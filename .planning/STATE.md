@@ -5,35 +5,35 @@
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Aprire Gmail e trovare le email gia' organizzate per categoria, senza alcuno sforzo manuale.
-**Current focus:** Phase 1 - Foundation
+**Current focus:** Phase 2 - Classification
 
 ## Current Position
 
-Phase: 1 of 3 (Foundation) — COMPLETED
-Plan: 3 of 3 in current phase
-Status: Phase Complete
-Last activity: 2026-03-07 — Completed 01-03-PLAN.md (Gmail fetch, CLI pipeline)
+Phase: 2 of 3 (Classification) — IN PROGRESS
+Plan: 2 of 3 in current phase
+Status: Executing
+Last activity: 2026-03-08 — Completed 02-01-PLAN.md (Classification engine)
 
-Progress: [████░░░░░░] 38%
+Progress: [██████░░░░] 63%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 4 min
-- Total execution time: 0.18 hours
+- Total plans completed: 5
+- Average duration: 3 min
+- Total execution time: 0.27 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 3/3 | 11 min | 4 min |
-| 2. Classification | 0/3 | - | - |
+| 2. Classification | 2/3 | 5 min | 3 min |
 | 3. Operability | 0/2 | - | - |
 
 **Recent Trend:**
-- Last 5 plans: 5min, 3min, 3min
-- Trend: stable
+- Last 5 plans: 5min, 3min, 3min, 2min, 3min
+- Trend: improving
 
 *Updated after each plan completion*
 
@@ -55,6 +55,13 @@ Recent decisions affecting current work:
 - [01-03]: Batch size 100 per BatchHttpRequest (practical Gmail limit)
 - [01-03]: Belt-and-suspenders time filtering: after: query pre-filter + internalDate code-side precision
 - [01-03]: gmail.py is provably read-only (AST-verified test enforces FETCH-05)
+- [02-02]: list_triage_labels excludes parent 'AutoTriage' label — only 'AutoTriage/*' children in mapping
+- [02-02]: ensure_label re-fetches full label list on 409 Conflict to recover gracefully
+- [02-02]: Cache dict mutated in place — caller keeps reference without reassignment
+- [02-01]: rapidfuzz with fuzz.ratio scorer and threshold=70 for fuzzy category matching
+- [02-01]: Pydantic models for GenAI response_schema, plain dataclass for internal ClassificationResult
+- [02-01]: Belt-and-suspenders: max_length=2 in Pydantic schema + explicit prompt instruction for 1-2 categories
+- [02-01]: GEMINI_API_KEY with GOOGLE_API_KEY fallback, loaded via python-dotenv
 
 ### Pending Todos
 
@@ -68,6 +75,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07
-Stopped at: Completed 01-03-PLAN.md (Phase 1 complete)
-Resume file: .planning/phases/01-foundation/01-03-SUMMARY.md
+Last session: 2026-03-08
+Stopped at: Completed 02-01-PLAN.md (Classification engine)
+Resume file: .planning/phases/02-classification/02-01-SUMMARY.md
