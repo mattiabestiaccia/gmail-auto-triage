@@ -13,7 +13,7 @@ Gmail Auto-Triage evolves from a bare project into a fully automated email class
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - OAuth2 auth, Gmail API fetch, YAML config loading and validation, project scaffolding
-- [ ] **Phase 2: Classification** - LLM-based email classification, Gmail label application, idempotency, dry-run mode
+- [x] **Phase 2: Classification** - LLM-based email classification, Gmail label application, idempotency, dry-run mode
 - [ ] **Phase 3: Operability** - Summary notifications, cron wrapper, structured logging, rate limiting, error resilience
 
 ## Phase Details
@@ -76,5 +76,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-07 |
-| 2. Classification | 2/3 | In Progress | - |
+| 2. Classification | 3/3 | Complete | 2026-03-08 |
 | 3. Operability | 0/2 | Not started | - |
