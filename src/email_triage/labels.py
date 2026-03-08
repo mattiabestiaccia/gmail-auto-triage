@@ -130,6 +130,23 @@ def ensure_label(service, name: str, cache: dict[str, str]) -> str:
         raise
 
 
+def remove_labels(service, message_id: str, label_ids: list[str]) -> None:
+    """Remove one or more labels from a Gmail message.
+
+    Single API call per message using messages().modify().
+
+    Args:
+        service: Authenticated Gmail API service resource.
+        message_id: Gmail message ID.
+        label_ids: List of label IDs to remove.
+    """
+    service.users().messages().modify(
+        userId="me",
+        id=message_id,
+        body={"removeLabelIds": label_ids},
+    ).execute()
+
+
 def apply_labels(service, message_id: str, label_ids: list[str]) -> None:
     """Apply one or more labels to a Gmail message.
 

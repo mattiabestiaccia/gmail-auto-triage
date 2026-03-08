@@ -23,7 +23,9 @@ from email_triage.models import (
 # System instruction for the Gemini Flash classifier
 _SYSTEM_INSTRUCTION = (
     "You are an email classifier. Assign each email to 1-2 categories "
-    "from the provided list. Be precise with confidence scores."
+    "from the provided list. Be precise with confidence scores. "
+    "If no category genuinely fits, assign confidence scores below 0.3. "
+    "Never force a category just because the sender's domain is vaguely related."
 )
 
 
@@ -64,6 +66,17 @@ def build_classification_prompt(
     return f"""Classify this email into 1 or 2 of the following categories.
 Return confidence scores (0.0-1.0) for each assigned category.
 Assign 1 or 2 categories maximum.
+
+IMPORTANT RULES:
+- If the email does not genuinely fit any category, assign confidence below 0.3.
+- Do NOT force a category just because the sender or platform is vaguely related.
+- Account security alerts, login notifications, 2FA codes, API token notifications,
+  app access warnings, and storage/service status alerts are NOT any category — assign low confidence.
+- SaaS onboarding emails, drip marketing, and feedback requests are NOT Newsletter — assign low confidence.
+- Course registrations and completions are Education, NOT Shopping (even if they resemble "order confirmations").
+- Interview invitations and recruiter emails are Recruiting, NOT Education (even if they mention a meeting/event).
+- Distinguish Job Alerts (automated platform digests) from Recruiting (direct 1-to-1 with HR/recruiters).
+- Login/access notifications from a platform are NOT that platform's category (e.g., idealista login is NOT Annunci).
 
 ## Available Categories
 {category_section}

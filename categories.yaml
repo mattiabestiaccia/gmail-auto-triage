@@ -1,6 +1,6 @@
 categories:
   - name: Newsletter
-    description: "Periodic newsletters, digests, and content subscriptions"
+    description: "Periodic newsletters, digests, and content subscriptions (NOT job alerts or promotional emails from platforms)"
     examples:
       - "Your weekly Python digest"
       - "Monthly tech roundup from TechCrunch"
@@ -14,18 +14,47 @@ categories:
       - "Monthly account summary from Chase"
 
   - name: Social
-    description: "Social media notifications and community updates"
+    description: "Direct social interactions: mentions, follows, messages, comments. NOT account security alerts or platform notifications about tokens/access/login"
     examples:
       - "John mentioned you in a comment"
       - "You have 5 new followers on LinkedIn"
-      - "New activity in your GitHub repository"
+      - "Someone replied to your post"
 
   - name: Shopping
-    description: "Order confirmations, shipping updates, and promotional offers"
+    description: "Order confirmations, shipping updates, and promotional offers for physical/digital products"
     examples:
       - "Your Amazon order has shipped"
       - "Order confirmed: #AMZ-9876"
       - "Flash sale: 50% off electronics"
+
+  - name: Job Alerts
+    description: "Automated job notifications and career opportunity digests from platforms like Indeed, LinkedIn, etc. NOT direct emails from recruiters or HR people"
+    examples:
+      - "New jobs matching AI Engineer in your area"
+      - "Mattia, cerchi un nuovo lavoro?"
+      - "aargon lab srl sta assumendo AI ENGINEER"
+      - "Ricercatore: Ferrari - High Performance Battery AI Developer"
+
+  - name: Recruiting
+    description: "Direct 1-to-1 communications with recruiters, HR, talent acquisition. Interview scheduling, candidacy updates, job offers from real people (not automated platform alerts)"
+    examples:
+      - "Re: Rischiesta aggiornamento candidatura Mattia Bruscia"
+      - "Invito: [IN SEDE] Mattia Bruscia / Venio AI - giovedì"
+      - "ci piacerebbe accoglierti nella nostra sede per un ultimo incontro"
+
+  - name: Education
+    description: "Course registrations, completions, certificates, and educational platform notifications"
+    examples:
+      - "Your registration for Claude 101"
+      - "Congratulations! You completed the course"
+      - "Your certificate is ready to download"
+
+  - name: Annunci
+    description: "Annunci immobiliari, compravendita, affitti da portali come idealista, subito.it, immobiliare.it"
+    examples:
+      - "Nuovi annunci per la tua ricerca a Milano"
+      - "Prezzo ridotto: appartamento in via Roma"
+      - "5 nuovi risultati per la tua ricerca su subito.it"
 
 # Fetch settings (uncomment to override defaults)
 # fetch:

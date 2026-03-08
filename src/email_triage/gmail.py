@@ -11,26 +11,21 @@ from datetime import datetime, timedelta, timezone
 from email_triage.models import EmailData
 
 
-def fetch_unread_ids(
+def fetch_message_ids(
     service,
+    query: str,
     max_results: int = 100,
-    after_date: str | None = None,
 ) -> list[str]:
-    """Fetch unread message IDs with pagination, up to max_results.
+    """Fetch message IDs matching a Gmail query, with pagination.
 
     Args:
         service: Authenticated Gmail API service resource.
+        query: Gmail search query string (e.g. "is:unread", "in:inbox").
         max_results: Maximum number of message IDs to return.
-        after_date: Optional date string (YYYY/MM/DD) for rough pre-filtering
-            via Gmail query. Belt-and-suspenders with code-side internalDate filtering.
 
     Returns:
         List of Gmail message IDs.
     """
-    query = "is:unread"
-    if after_date:
-        query += f" after:{after_date}"
-
     ids: list[str] = []
     request = service.users().messages().list(
         userId="me",
@@ -47,6 +42,30 @@ def fetch_unread_ids(
         request = service.users().messages().list_next(request, response)
 
     return ids
+
+
+def fetch_unread_ids(
+    service,
+    max_results: int = 100,
+    after_date: str | None = None,
+) -> list[str]:
+    """Fetch unread message IDs with pagination, up to max_results.
+
+    Thin wrapper around fetch_message_ids with "is:unread" query.
+
+    Args:
+        service: Authenticated Gmail API service resource.
+        max_results: Maximum number of message IDs to return.
+        after_date: Optional date string (YYYY/MM/DD) for rough pre-filtering
+            via Gmail query. Belt-and-suspenders with code-side internalDate filtering.
+
+    Returns:
+        List of Gmail message IDs.
+    """
+    query = "is:unread"
+    if after_date:
+        query += f" after:{after_date}"
+    return fetch_message_ids(service, query, max_results)
 
 
 def fetch_messages_batch(

@@ -13,6 +13,7 @@ from email_triage.labels import (
     ensure_label,
     is_already_triaged,
     list_triage_labels,
+    remove_labels,
 )
 from email_triage.models import EmailData
 
@@ -316,4 +317,37 @@ class TestApplyLabels:
             userId="me",
             id="msg456",
             body={"addLabelIds": ["Label_1", "Label_2"]},
+        )
+
+
+# ---------------------------------------------------------------------------
+# Tests: remove_labels (mocked Gmail service)
+# ---------------------------------------------------------------------------
+
+class TestRemoveLabels:
+    """remove_labels: calls messages().modify with removeLabelIds."""
+
+    def test_calls_modify_with_remove_label_ids(self):
+        """Single label ID removed via modify."""
+        service = MagicMock()
+
+        remove_labels(service, "msg123", ["Label_1"])
+
+        service.users().messages().modify.assert_called_once_with(
+            userId="me",
+            id="msg123",
+            body={"removeLabelIds": ["Label_1"]},
+        )
+        service.users().messages().modify().execute.assert_called_once()
+
+    def test_multiple_labels(self):
+        """Multiple label IDs removed in one modify call."""
+        service = MagicMock()
+
+        remove_labels(service, "msg456", ["Label_1", "Label_2"])
+
+        service.users().messages().modify.assert_called_once_with(
+            userId="me",
+            id="msg456",
+            body={"removeLabelIds": ["Label_1", "Label_2"]},
         )

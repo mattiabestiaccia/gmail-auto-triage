@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, call
 
 from email_triage.gmail import (
+    fetch_message_ids,
     fetch_messages_batch,
     fetch_unread_ids,
     filter_by_window,
@@ -138,6 +139,33 @@ def test_fetch_unread_ids_with_date_filter():
     # Check the query passed to list()
     call_kwargs = service.users().messages().list.call_args
     assert "after:2026/03/06" in call_kwargs.kwargs.get("q", call_kwargs[1].get("q", ""))
+
+
+# ---------------------------------------------------------------------------
+# Tests: fetch_message_ids (generic query)
+# ---------------------------------------------------------------------------
+
+def test_fetch_message_ids_passes_query():
+    """Verify custom query is passed to the Gmail API."""
+    service = _mock_service_list([["m1", "m2"]])
+
+    result = fetch_message_ids(service, "in:inbox -is:unread after:2026/01/01", max_results=20)
+
+    assert result == ["m1", "m2"]
+    call_kwargs = service.users().messages().list.call_args
+    q = call_kwargs.kwargs.get("q", call_kwargs[1].get("q", ""))
+    assert q == "in:inbox -is:unread after:2026/01/01"
+
+
+def test_fetch_unread_ids_builds_correct_query():
+    """fetch_unread_ids delegates to fetch_message_ids with is:unread query."""
+    service = _mock_service_list([["m1"]])
+
+    fetch_unread_ids(service, max_results=50, after_date="2026/03/01")
+
+    call_kwargs = service.users().messages().list.call_args
+    q = call_kwargs.kwargs.get("q", call_kwargs[1].get("q", ""))
+    assert q == "is:unread after:2026/03/01"
 
 
 # ---------------------------------------------------------------------------
