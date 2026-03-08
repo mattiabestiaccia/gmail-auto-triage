@@ -45,12 +45,12 @@ Plans:
   3. Gmail labels matching the classification are applied automatically, with auto-creation of missing labels under a configurable namespace prefix (e.g., `AutoTriage/`)
   4. Emails that already bear any triage label are skipped entirely (idempotency) — re-running the script produces no duplicate labels or re-classifications
   5. Running with `--dry-run` classifies emails and prints results without applying any labels in Gmail
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Classification engine: Gemini Flash structured output, confidence scoring, fuzzy category matching
+- [ ] 02-02-PLAN.md — Gmail label management: list, create, apply labels under AutoTriage/ namespace with idempotency
+- [ ] 02-03-PLAN.md — CLI pipeline integration: --dry-run flag, classification loop, summary output
 
 ### Phase 3: Operability
 **Goal**: The script runs unattended via cron with robust error handling, rate limiting, structured logging, and sends a summary email after each run
