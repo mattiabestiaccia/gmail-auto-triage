@@ -48,8 +48,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Classification engine: Gemini Flash structured output, confidence scoring, fuzzy category matching
-- [ ] 02-02-PLAN.md — Gmail label management: list, create, apply labels under AutoTriage/ namespace with idempotency
+- [x] 02-01-PLAN.md — Classification engine: Gemini Flash structured output, confidence scoring, fuzzy category matching
+- [x] 02-02-PLAN.md — Gmail label management: list, create, apply labels under AutoTriage/ namespace with idempotency
 - [ ] 02-03-PLAN.md — CLI pipeline integration: --dry-run flag, classification loop, summary output
 
 ### Phase 3: Operability
@@ -76,5 +76,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-07 |
-| 2. Classification | 0/3 | Not started | - |
+| 2. Classification | 2/3 | In Progress | - |
 | 3. Operability | 0/2 | Not started | - |
