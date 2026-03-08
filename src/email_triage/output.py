@@ -100,3 +100,36 @@ def print_progress(current: int, total: int, label: str = "Fetched") -> None:
         print(line)
     if current == total:
         print()  # final newline
+
+
+def print_classification_result(
+    subject: str,
+    categories: list[tuple[str, float]],
+    is_ambiguous: bool,
+    dry_run: bool,
+) -> None:
+    """Print per-email classification result."""
+    truncated = subject[:60] + "..." if len(subject) > 60 else subject
+    print(f"  Subject: {truncated}")
+    if is_ambiguous:
+        print(f"  -> {Colors.warn('_Ambiguous (below threshold)')}")
+    else:
+        parts = ", ".join(f"{name} ({conf:.2f})" for name, conf in categories)
+        print(f"  -> {Colors.success(parts)}")
+
+
+def print_classification_summary(
+    classified: int,
+    ambiguous: int,
+    skipped: int,
+    dry_run: bool,
+    elapsed: float,
+) -> None:
+    """Print end-of-run classification statistics."""
+    mode = "(dry-run)" if dry_run else "(labeled)"
+    print()
+    print(Colors.bold("--- Classification Summary ---"))
+    print(f"  {Colors.success(f'Classified: {classified} emails')} {mode}")
+    print(f"  {Colors.warn(f'Ambiguous:  {ambiguous} emails')}")
+    print(f"  {Colors.info(f'Skipped:    {skipped} emails (already triaged)')}")
+    print(f"  Elapsed:    {elapsed:.1f}s")
