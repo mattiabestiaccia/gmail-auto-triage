@@ -14,7 +14,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - OAuth2 auth, Gmail API fetch, YAML config loading and validation, project scaffolding
 - [x] **Phase 2: Classification** - LLM-based email classification, Gmail label application, idempotency, dry-run mode
-- [ ] **Phase 3: Operability** - Summary notifications, cron wrapper, structured logging, rate limiting, error resilience
+- [x] **Phase 3: Operability** - Summary notifications, cron wrapper, structured logging, rate limiting, error resilience
+- [ ] **Phase 4: Cleanup & Tech Debt** - Token usage tracking, test isolation fixes, dead code removal, docs update
 
 ## Phase Details
 
@@ -68,6 +69,22 @@ Plans:
 - [ ] 03-01: TBD
 - [ ] 03-02: TBD
 
+### Phase 4: Cleanup & Tech Debt
+**Goal**: Close all tech debt from milestone audit — token usage populated in summary email, test isolation fixed, dead code removed, documentation updated
+**Depends on**: Phase 3
+**Requirements**: NOTF-02 (gap closure)
+**Gap Closure**: Closes gaps from v1.0-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. Summary email shows real token usage (prompt + completion tokens) instead of N/A after each run
+  2. All 134 tests pass (including previously failing test_missing_api_key_exits and test_google_api_key_fallback)
+  3. cli.py uses AMBIGUOUS_LABEL constant from labels.py instead of hardcoded "_Ambiguous" string
+  4. No dead code: print_warn removed from output.py
+  5. OPS-06 marked Complete in REQUIREMENTS.md traceability
+**Plans**: TBD
+
+Plans:
+- [ ] 04-01: TBD
+
 ## Progress
 
 **Execution Order:**
@@ -77,4 +94,5 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-07 |
 | 2. Classification | 3/3 | Complete | 2026-03-08 |
-| 3. Operability | 0/2 | Not started | - |
+| 3. Operability | 2/2 | Complete | 2026-03-09 |
+| 4. Cleanup & Tech Debt | 0/1 | Not started | - |
