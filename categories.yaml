@@ -1,4 +1,12 @@
 categories:
+  - name: Personale
+    description: "Direct 1-to-1 email written by a real person (friend, family member, colleague, acquaintance) addressed personally to me. Conversational tone, personal language, typically requires a reply. NOT automated emails, NOT platform notifications, NOT newsletters, NOT mass emails — even if they mention my name. Can be combined with another category (e.g. Recruiting) if the email is both personal AND topic-specific."
+    examples:
+      - "Ciao, ti scrivo qui perché non mi rispondi su WhatsApp"
+      - "Sei libero sabato? Pensavo di organizzare qualcosa"
+      - "Ho visto il tuo profilo e volevo chiederti una cosa"
+      - "Fammi sapere se ti devo mandare i soldi via bonifico"
+
   - name: Newsletter
     description: "Periodic newsletters, digests, and content subscriptions (NOT job alerts or promotional emails from platforms)"
     examples:
@@ -56,12 +64,6 @@ categories:
       - "Prezzo ridotto: appartamento in via Roma"
       - "5 nuovi risultati per la tua ricerca su subito.it"
 
-# Fetch settings (uncomment to override defaults)
-# fetch:
-#   processing_window_hours: 24   # How far back to look for emails
-#   max_emails: 100               # Maximum emails to process per run
-#   snippet_length: 500           # Max characters in email snippet
-#   fields:                       # Fields to use for classification
-#     - subject
-#     - sender
-#     - snippet
+fetch:
+  processing_window_hours: 720  # 30 giorni — copre tutto il non letto
+  max_emails: 100               # Maximum emails to process per run

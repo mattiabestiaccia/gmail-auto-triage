@@ -92,10 +92,10 @@ def ensure_label(service, name: str, cache: dict[str, str]) -> str:
     if full_name in cache:
         return cache[full_name]
 
-    try:
-        # Ensure parent "AutoTriage" exists
-        parent_name = LABEL_PREFIX.rstrip("/")
-        if parent_name not in cache:
+    # Ensure parent "AutoTriage" exists (separate 409 handler from child creation)
+    parent_name = LABEL_PREFIX.rstrip("/")
+    if parent_name not in cache:
+        try:
             parent = _execute_with_retry(
                 service.users()
                 .labels()
@@ -105,8 +105,21 @@ def ensure_label(service, name: str, cache: dict[str, str]) -> str:
                 )
             )
             cache[parent["name"]] = parent["id"]
+        except HttpError as err:
+            if err.resp.status == 409:
+                # Parent already exists -- fetch its ID and continue to child creation
+                all_labels = _execute_with_retry(
+                    service.users().labels().list(userId="me")
+                )
+                for lbl in all_labels.get("labels", []):
+                    if lbl["name"] == parent_name:
+                        cache[parent_name] = lbl["id"]
+                        break
+            else:
+                raise
 
-        # Create child label
+    # Create child label
+    try:
         label = _execute_with_retry(
             service.users()
             .labels()
@@ -120,16 +133,9 @@ def ensure_label(service, name: str, cache: dict[str, str]) -> str:
 
     except HttpError as err:
         if err.resp.status == 409:
-            # Label already exists -- re-fetch and return existing ID
+            # Child label already exists -- re-fetch and return existing ID
             refreshed = list_triage_labels(service)
             cache.update(refreshed)
-            # Also fetch parent if needed
-            all_labels = _execute_with_retry(
-                service.users().labels().list(userId="me")
-            )
-            for lbl in all_labels.get("labels", []):
-                if lbl["name"] == LABEL_PREFIX.rstrip("/"):
-                    cache[lbl["name"]] = lbl["id"]
             return cache[full_name]
         raise
 
