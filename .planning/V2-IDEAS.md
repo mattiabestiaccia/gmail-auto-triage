@@ -6,6 +6,29 @@
 
 ---
 
+## F — Deploy Cloud / Esecuzione Persistente
+
+**Problema:** Il tool gira solo quando il PC è acceso e WSL2 è attivo. Se il PC è spento, le email si accumulano non triaggiate.
+
+**Idea:** Spostare l'esecuzione su infrastruttura always-on, eliminando la dipendenza dalla macchina locale.
+
+**Opzioni:**
+
+| Opzione | Costo stimato | Complessità | Note |
+|---------|--------------|-------------|------|
+| **Google Cloud Run** (job schedulato) | ~€0 free tier | Bassa | Container Docker, Cloud Scheduler al posto del cron, OAuth2 token su Secret Manager |
+| **Railway / Render** (cron job) | ~€0-5/mese | Bassa | Deploy da GitHub, variabili env native, cron built-in |
+| **VPS entry-level** (Hetzner CX11, €4/mese) | ~€4/mese | Media | Piena libertà, systemd, più servizi sullo stesso server |
+| **Raspberry Pi** (già in casa) | €0 | Bassa | Always-on, locale, nessun costo cloud |
+
+**Sfida principale:** OAuth2 token — il token attuale è legato alla macchina locale (`credentials/token.json`). In cloud serve:
+- Storico del token su persistent storage (Secret Manager, volume montato, ecc.)
+- Primo login interattivo fatto una volta e token salvato, poi solo refresh automatico
+
+**Prerequisito:** Usare il tool localmente abbastanza da essere sicuri che funziona prima di migrare.
+
+---
+
 ## Tech Debt Residuo da v1.0
 
 Piccoli fix che non hanno giustificato una fase a sé ma andrebbero chiusi prima o durante v2.
