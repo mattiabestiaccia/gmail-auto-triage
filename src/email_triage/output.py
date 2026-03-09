@@ -57,11 +57,6 @@ def print_info(msg: str) -> None:
     print(Colors.info(msg))
 
 
-def print_warn(msg: str) -> None:
-    """Print a warning message to stderr with WARN color."""
-    print(Colors.warn(f"WARNING: {msg}"), file=sys.stderr)
-
-
 def print_error(msg: str, *, suggestion: str | None = None) -> None:
     """Print an error message to stderr with ERROR color.
 

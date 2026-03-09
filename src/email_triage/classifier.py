@@ -186,6 +186,13 @@ def classify_email(
 
     parsed = ClassificationResponse.model_validate_json(response.text)
 
+    # Extract token usage from response metadata (None-safe)
+    prompt_tokens = 0
+    completion_tokens = 0
+    if response.usage_metadata:
+        prompt_tokens = response.usage_metadata.prompt_token_count or 0
+        completion_tokens = response.usage_metadata.candidates_token_count or 0
+
     # Apply fuzzy matching and confidence filtering
     matched_categories: list[tuple[str, float]] = []
     for cat_result in parsed.categories:
@@ -197,4 +204,6 @@ def classify_email(
         categories=matched_categories,
         reasoning=parsed.reasoning,
         is_ambiguous=len(matched_categories) == 0,
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
     )

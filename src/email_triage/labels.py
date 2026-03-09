@@ -20,7 +20,8 @@ logger = logging.getLogger(__name__)
 
 # Hardcoded per user decision -- NOT configurable
 LABEL_PREFIX = "AutoTriage/"
-AMBIGUOUS_LABEL = "AutoTriage/_Ambiguous"
+AMBIGUOUS_CATEGORY = "_Ambiguous"
+AMBIGUOUS_LABEL = f"{LABEL_PREFIX}{AMBIGUOUS_CATEGORY}"
 
 # Label visibility defaults for created labels
 _LABEL_VISIBILITY = {

@@ -25,6 +25,7 @@ from email_triage.gmail import (
     parse_message,
 )
 from email_triage.labels import (
+    AMBIGUOUS_CATEGORY,
     apply_labels,
     ensure_label,
     is_already_triaged,
@@ -217,6 +218,8 @@ def main(args: list[str] | None = None) -> None:
                     client, email, config.categories, config.classification,
                 )
                 stats.api_calls_llm += 1
+                stats.token_usage_prompt += result.prompt_tokens
+                stats.token_usage_completion += result.completion_tokens
 
                 if result.is_ambiguous:
                     stats.ambiguous += 1
@@ -238,7 +241,7 @@ def main(args: list[str] | None = None) -> None:
                 if not parsed.dry_run:
                     if result.is_ambiguous:
                         label_id = ensure_label(
-                            service, "_Ambiguous", label_cache,
+                            service, AMBIGUOUS_CATEGORY, label_cache,
                         )
                         apply_labels(service, email.id, [label_id])
                     else:

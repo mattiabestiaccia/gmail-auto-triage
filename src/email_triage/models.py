@@ -60,11 +60,14 @@ class ClassificationResult:
     """Internal classification result after fuzzy matching and threshold filtering.
 
     Plain dataclass (not Pydantic) because it's internal state, not schema.
+    Token fields populated from Gemini response.usage_metadata.
     """
 
     categories: list[tuple[str, float]]
     reasoning: str
     is_ambiguous: bool
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
 
 
 # ---------------------------------------------------------------------------
