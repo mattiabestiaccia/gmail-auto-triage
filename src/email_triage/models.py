@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pydantic import BaseModel, Field
 
@@ -65,3 +65,30 @@ class ClassificationResult:
     categories: list[tuple[str, float]]
     reasoning: str
     is_ambiguous: bool
+
+
+# ---------------------------------------------------------------------------
+# Run statistics for accumulating pipeline metrics
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class RunStats:
+    """Accumulated statistics for a single pipeline run.
+
+    All fields have defaults so RunStats() can be created at pipeline start
+    and populated incrementally during execution.
+    """
+
+    total_fetched: int = 0
+    skipped_triaged: int = 0
+    classified: int = 0
+    ambiguous: int = 0
+    errors: int = 0
+    error_details: list[str] = field(default_factory=list)
+    categories: dict[str, int] = field(default_factory=dict)
+    api_calls_gmail: int = 0
+    api_calls_llm: int = 0
+    token_usage_prompt: int = 0
+    token_usage_completion: int = 0
+    elapsed_seconds: float = 0.0
