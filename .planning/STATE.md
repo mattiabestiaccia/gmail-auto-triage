@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-last_updated: "2026-03-09T09:22:14.044Z"
+status: complete
+last_updated: "2026-03-09T10:17:56Z"
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_phases: 4
+  completed_phases: 4
+  total_plans: 9
+  completed_plans: 9
 ---
 
 # Project State
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Aprire Gmail e trovare le email gia' organizzate per categoria, senza alcuno sforzo manuale.
-**Current focus:** Phase 3 - Operability
+**Current focus:** Phase 4 - Cleanup & Tech Debt (COMPLETE)
 
 ## Current Position
 
-Phase: 3 of 3 (Operability) — COMPLETE
-Plan: 2 of 2 in current phase
-Status: All plans complete — Phase 3 done
-Last activity: 2026-03-09 — Completed 03-02-PLAN.md (CLI ops & notifications)
+Phase: 4 of 4 (Cleanup) — COMPLETE
+Plan: 1 of 1 in current phase
+Status: All plans complete — Phase 4 done
+Last activity: 2026-03-09 — Completed 04-01-PLAN.md (Tech debt closure)
 
 Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 4 min
-- Total execution time: 0.53 hours
+- Total execution time: 0.58 hours
 
 **By Phase:**
 
@@ -43,14 +43,16 @@ Progress: [██████████] 100%
 | 1. Foundation | 3/3 | 11 min | 4 min |
 | 2. Classification | 3/3 | 8 min | 3 min |
 | 3. Operability | 2/2 | 13 min | 7 min |
+| 4. Cleanup | 1/1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 2min, 3min, 9min, 4min
+- Last 5 plans: 2min, 3min, 9min, 4min, 3min
 - Trend: stable
 
 *Updated after each plan completion*
 | Phase 03 P01 | 9 | 2 tasks | 9 files |
 | Phase 03 P02 | 4 | 2 tasks | 5 files |
+| Phase 04 P01 | 3 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -89,6 +91,8 @@ Recent decisions affecting current work:
 - [03-02]: Summary email failure logged as warning, does not change exit code (Pitfall #6)
 - [03-02]: No summary email on zero-email runs or dry-run mode
 - [03-02]: print_info/print_error replaced by logger; print_classification_result/summary kept for TTY output
+- [04-01]: Token fields as defaults (=0) on ClassificationResult — no breaking changes to existing callers
+- [04-01]: usage_metadata extraction with None guards for both metadata object and individual fields
 
 ### Pending Todos
 
@@ -103,5 +107,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed 03-02-PLAN.md (CLI ops & notifications)
-Resume file: .planning/phases/03-operability/03-02-SUMMARY.md
+Stopped at: Completed 04-01-PLAN.md (Tech debt closure)
+Resume file: .planning/phases/04-cleanup/04-01-SUMMARY.md

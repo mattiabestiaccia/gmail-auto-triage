@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - OAuth2 auth, Gmail API fetch, YAML config loading and validation, project scaffolding
 - [x] **Phase 2: Classification** - LLM-based email classification, Gmail label application, idempotency, dry-run mode
 - [x] **Phase 3: Operability** - Summary notifications, cron wrapper, structured logging, rate limiting, error resilience
-- [ ] **Phase 4: Cleanup & Tech Debt** - Token usage tracking, test isolation fixes, dead code removal, docs update
+- [x] **Phase 4: Cleanup & Tech Debt** - Token usage tracking, test isolation fixes, dead code removal, docs update
 
 ## Phase Details
 
@@ -51,7 +51,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Classification engine: Gemini Flash structured output, confidence scoring, fuzzy category matching
 - [x] 02-02-PLAN.md — Gmail label management: list, create, apply labels under AutoTriage/ namespace with idempotency
-- [ ] 02-03-PLAN.md — CLI pipeline integration: --dry-run flag, classification loop, summary output
+- [x] 02-03-PLAN.md — CLI pipeline integration: --dry-run flag, classification loop, summary output
 
 ### Phase 3: Operability
 **Goal**: The script runs unattended via cron with robust error handling, rate limiting, structured logging, and sends a summary email after each run
@@ -66,8 +66,8 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [x] 03-01-PLAN.md — Retry logic, structured logging, rate limiting
+- [x] 03-02-PLAN.md — CLI ops, summary email notifications
 
 ### Phase 4: Cleanup & Tech Debt
 **Goal**: Close all tech debt from milestone audit — token usage populated in summary email, test isolation fixed, dead code removed, documentation updated
@@ -83,7 +83,7 @@ Plans:
 **Plans**: 1 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Token usage extraction, test isolation fixes, AMBIGUOUS_CATEGORY constant, dead code removal, docs update
+- [x] 04-01-PLAN.md — Token usage extraction, test isolation fixes, AMBIGUOUS_CATEGORY constant, dead code removal, docs update
 
 ## Progress
 
@@ -95,4 +95,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Foundation | 3/3 | Complete | 2026-03-07 |
 | 2. Classification | 3/3 | Complete | 2026-03-08 |
 | 3. Operability | 2/2 | Complete | 2026-03-09 |
-| 4. Cleanup & Tech Debt | 0/1 | Not started | - |
+| 4. Cleanup & Tech Debt | 1/1 | Complete | 2026-03-09 |
