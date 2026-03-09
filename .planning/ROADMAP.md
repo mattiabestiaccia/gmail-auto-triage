@@ -80,15 +80,15 @@ Plans:
   3. cli.py uses AMBIGUOUS_LABEL constant from labels.py instead of hardcoded "_Ambiguous" string
   4. No dead code: print_warn removed from output.py
   5. OPS-06 marked Complete in REQUIREMENTS.md traceability
-**Plans**: TBD
+**Plans**: 1 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Token usage extraction, test isolation fixes, AMBIGUOUS_CATEGORY constant, dead code removal, docs update
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3
+Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
