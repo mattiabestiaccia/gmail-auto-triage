@@ -313,22 +313,25 @@ class TestCreateGenaiClient:
     """Test client creation with API key from environment."""
 
     def test_missing_api_key_exits(self) -> None:
-        with patch.dict("os.environ", {}, clear=True):
-            with pytest.raises(SystemExit) as exc_info:
-                create_genai_client()
-            assert "GEMINI_API_KEY" in str(exc_info.value)
+        with patch("email_triage.classifier.load_dotenv"):
+            with patch.dict("os.environ", {}, clear=True):
+                with pytest.raises(SystemExit) as exc_info:
+                    create_genai_client()
+                assert "GEMINI_API_KEY" in str(exc_info.value)
 
     def test_gemini_api_key_used(self) -> None:
-        with patch.dict("os.environ", {"GEMINI_API_KEY": "test-key"}, clear=True):
-            with patch("email_triage.classifier.genai.Client") as mock_client:
-                create_genai_client()
-                mock_client.assert_called_once_with(api_key="test-key")
+        with patch("email_triage.classifier.load_dotenv"):
+            with patch.dict("os.environ", {"GEMINI_API_KEY": "test-key"}, clear=True):
+                with patch("email_triage.classifier.genai.Client") as mock_client:
+                    create_genai_client()
+                    mock_client.assert_called_once_with(api_key="test-key")
 
     def test_google_api_key_fallback(self) -> None:
-        with patch.dict("os.environ", {"GOOGLE_API_KEY": "fallback-key"}, clear=True):
-            with patch("email_triage.classifier.genai.Client") as mock_client:
-                create_genai_client()
-                mock_client.assert_called_once_with(api_key="fallback-key")
+        with patch("email_triage.classifier.load_dotenv"):
+            with patch.dict("os.environ", {"GOOGLE_API_KEY": "fallback-key"}, clear=True):
+                with patch("email_triage.classifier.genai.Client") as mock_client:
+                    create_genai_client()
+                    mock_client.assert_called_once_with(api_key="fallback-key")
 
 
 # ---------------------------------------------------------------------------
@@ -443,3 +446,41 @@ class TestClassifyEmail:
         result = classify_email(mock_client, sample_email, category_configs, default_config)
         assert result.categories == []
         assert result.is_ambiguous is True
+
+    def test_returns_token_usage(
+        self,
+        sample_email: EmailData,
+        category_configs: list[CategoryConfig],
+        default_config: ClassificationConfig,
+    ) -> None:
+        """classify_email extracts token usage from response.usage_metadata."""
+        mock_client = MagicMock()
+        mock_response = self._make_mock_response(
+            '{"categories": [{"category": "Newsletter", "confidence": 0.9}], "reasoning": "test"}',
+        )
+        # Set up usage_metadata
+        mock_response.usage_metadata.prompt_token_count = 150
+        mock_response.usage_metadata.candidates_token_count = 42
+        mock_client.models.generate_content.return_value = mock_response
+
+        result = classify_email(mock_client, sample_email, category_configs, default_config)
+        assert result.prompt_tokens == 150
+        assert result.completion_tokens == 42
+
+    def test_handles_missing_usage_metadata(
+        self,
+        sample_email: EmailData,
+        category_configs: list[CategoryConfig],
+        default_config: ClassificationConfig,
+    ) -> None:
+        """Token counts default to 0 when usage_metadata is None."""
+        mock_client = MagicMock()
+        mock_response = self._make_mock_response(
+            '{"categories": [{"category": "Newsletter", "confidence": 0.9}], "reasoning": "test"}',
+        )
+        mock_response.usage_metadata = None
+        mock_client.models.generate_content.return_value = mock_response
+
+        result = classify_email(mock_client, sample_email, category_configs, default_config)
+        assert result.prompt_tokens == 0
+        assert result.completion_tokens == 0

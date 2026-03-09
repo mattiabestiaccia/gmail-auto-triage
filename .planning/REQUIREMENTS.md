@@ -55,7 +55,7 @@ Requirements for initial release. Includes all table stakes + differentiators.
 ### Notification
 
 - [x] **NOTF-01**: Summary email notification sent to self after each run
-- [ ] **NOTF-02**: Statistics in summary email (per-category breakdown, error count, token usage estimate)
+- [x] **NOTF-02**: Statistics in summary email (per-category breakdown, error count, token usage estimate)
 
 ## v2 Requirements
 
@@ -121,7 +121,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | OPS-04 | Phase 3 | Complete |
 | OPS-05 | Phase 3 | Complete |
 | NOTF-01 | Phase 3 | Complete |
-| NOTF-02 | Phase 4 | Pending |
+| NOTF-02 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 29 total
