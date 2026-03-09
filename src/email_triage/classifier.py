@@ -6,12 +6,20 @@ with confidence scoring and fuzzy category matching.
 
 from __future__ import annotations
 
+import logging
 import os
 
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from rapidfuzz import fuzz, process
+from tenacity import (
+    before_sleep_log,
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from email_triage.config import CategoryConfig, ClassificationConfig
 from email_triage.models import (
@@ -20,12 +28,24 @@ from email_triage.models import (
     EmailData,
 )
 
+logger = logging.getLogger(__name__)
+
 # System instruction for the Gemini Flash classifier
 _SYSTEM_INSTRUCTION = (
     "You are an email classifier. Assign each email to 1-2 categories "
     "from the provided list. Be precise with confidence scores. "
     "If no category genuinely fits, assign confidence scores below 0.3. "
     "Never force a category just because the sender's domain is vaguely related."
+)
+
+# Outer retry for non-HTTP transient errors only.
+# google-genai SDK already retries 429/503 internally — avoid double retry.
+llm_retry = retry(
+    retry=retry_if_exception_type((ConnectionError, TimeoutError, OSError)),
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=2, min=4, max=30),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+    reraise=True,
 )
 
 
@@ -117,6 +137,16 @@ def fuzzy_match_category(
     return result[0] if result else None
 
 
+@llm_retry
+def _generate_content_with_retry(client, model, contents, config):
+    """Call Gemini generate_content with retry on transient connection errors."""
+    return client.models.generate_content(
+        model=model,
+        contents=contents,
+        config=config,
+    )
+
+
 def classify_email(
     client: genai.Client,
     email: EmailData,
@@ -142,7 +172,8 @@ def classify_email(
     prompt = build_classification_prompt(email, categories)
     valid_names = [cat.name for cat in categories]
 
-    response = client.models.generate_content(
+    response = _generate_content_with_retry(
+        client,
         model=config.model,
         contents=prompt,
         config=types.GenerateContentConfig(

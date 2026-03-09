@@ -1,14 +1,50 @@
 # SAFETY: This module ONLY reads. No modify/trash/delete calls.
 # All functions use messages.list and messages.get exclusively.
+# Retry wrappers are internal — they do not change the read-only API surface.
 """Gmail API wrapper: fetch unread IDs with pagination, batch message retrieval,
 time window filtering, and message parsing into EmailData."""
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
 
+from googleapiclient.errors import HttpError
+from tenacity import (
+    before_sleep_log,
+    retry,
+    retry_if_exception,
+    stop_after_attempt,
+    wait_exponential,
+)
+
 from email_triage.models import EmailData
+
+logger = logging.getLogger(__name__)
+
+
+def _is_retryable_http_error(exc: BaseException) -> bool:
+    """Return True only for transient Gmail API errors (429/5xx).
+
+    Auth errors (401/403) and validation errors (400) are NOT retried.
+    """
+    return isinstance(exc, HttpError) and exc.resp.status in (429, 500, 502, 503, 504)
+
+
+gmail_retry = retry(
+    retry=retry_if_exception(_is_retryable_http_error),
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=2, max=60),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+    reraise=True,
+)
+
+
+@gmail_retry
+def _execute_with_retry(request):
+    """Execute a Gmail API request with retry on transient errors."""
+    return request.execute()
 
 
 def fetch_message_ids(
@@ -34,7 +70,7 @@ def fetch_message_ids(
     )
 
     while request and len(ids) < max_results:
-        response = request.execute()
+        response = _execute_with_retry(request)
         for msg in response.get("messages", []):
             if len(ids) >= max_results:
                 break
@@ -106,7 +142,7 @@ def fetch_messages_batch(
                 ),
                 request_id=msg_id,
             )
-        batch.execute()
+        _execute_with_retry(batch)
 
         if on_progress:
             on_progress(len(results) + len(errors), len(message_ids))

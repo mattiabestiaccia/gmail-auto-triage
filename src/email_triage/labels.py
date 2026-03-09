@@ -9,9 +9,14 @@ Handles the full label lifecycle:
 
 from __future__ import annotations
 
+import logging
+
 from googleapiclient.errors import HttpError
 
+from email_triage.gmail import _execute_with_retry
 from email_triage.models import EmailData
+
+logger = logging.getLogger(__name__)
 
 # Hardcoded per user decision -- NOT configurable
 LABEL_PREFIX = "AutoTriage/"
@@ -37,7 +42,7 @@ def list_triage_labels(service) -> dict[str, str]:
     Returns:
         Dict mapping label name to label ID for all triage labels.
     """
-    result = service.users().labels().list(userId="me").execute()
+    result = _execute_with_retry(service.users().labels().list(userId="me"))
     labels = result.get("labels", [])
     return {
         label["name"]: label["id"]
@@ -90,26 +95,24 @@ def ensure_label(service, name: str, cache: dict[str, str]) -> str:
         # Ensure parent "AutoTriage" exists
         parent_name = LABEL_PREFIX.rstrip("/")
         if parent_name not in cache:
-            parent = (
+            parent = _execute_with_retry(
                 service.users()
                 .labels()
                 .create(
                     userId="me",
                     body={"name": parent_name, **_LABEL_VISIBILITY},
                 )
-                .execute()
             )
             cache[parent["name"]] = parent["id"]
 
         # Create child label
-        label = (
+        label = _execute_with_retry(
             service.users()
             .labels()
             .create(
                 userId="me",
                 body={"name": full_name, **_LABEL_VISIBILITY},
             )
-            .execute()
         )
         cache[label["name"]] = label["id"]
         return label["id"]
@@ -120,8 +123,8 @@ def ensure_label(service, name: str, cache: dict[str, str]) -> str:
             refreshed = list_triage_labels(service)
             cache.update(refreshed)
             # Also fetch parent if needed
-            all_labels = (
-                service.users().labels().list(userId="me").execute()
+            all_labels = _execute_with_retry(
+                service.users().labels().list(userId="me")
             )
             for lbl in all_labels.get("labels", []):
                 if lbl["name"] == LABEL_PREFIX.rstrip("/"):
@@ -140,11 +143,13 @@ def remove_labels(service, message_id: str, label_ids: list[str]) -> None:
         message_id: Gmail message ID.
         label_ids: List of label IDs to remove.
     """
-    service.users().messages().modify(
-        userId="me",
-        id=message_id,
-        body={"removeLabelIds": label_ids},
-    ).execute()
+    _execute_with_retry(
+        service.users().messages().modify(
+            userId="me",
+            id=message_id,
+            body={"removeLabelIds": label_ids},
+        )
+    )
 
 
 def apply_labels(service, message_id: str, label_ids: list[str]) -> None:
@@ -157,8 +162,10 @@ def apply_labels(service, message_id: str, label_ids: list[str]) -> None:
         message_id: Gmail message ID.
         label_ids: List of label IDs to apply.
     """
-    service.users().messages().modify(
-        userId="me",
-        id=message_id,
-        body={"addLabelIds": label_ids},
-    ).execute()
+    _execute_with_retry(
+        service.users().messages().modify(
+            userId="me",
+            id=message_id,
+            body={"addLabelIds": label_ids},
+        )
+    )
