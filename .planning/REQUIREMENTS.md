@@ -45,17 +45,17 @@ Requirements for initial release. Includes all table stakes + differentiators.
 
 ### Operability
 
-- [ ] **OPS-01**: Cron-compatible execution (clean exit codes, no interactive prompts, stdout/stderr logging)
+- [x] **OPS-01**: Cron-compatible execution (clean exit codes, no interactive prompts, stdout/stderr logging)
 - [x] **OPS-02**: Structured logging with configurable levels to file and console
-- [ ] **OPS-03**: Graceful per-email error handling — one failure does not crash the batch
+- [x] **OPS-03**: Graceful per-email error handling — one failure does not crash the batch
 - [x] **OPS-04**: Rate limiting with exponential backoff for Gmail API (429/503)
 - [x] **OPS-05**: Retry logic for LLM API failures with exponential backoff
 - [ ] **OPS-06**: Dry-run mode — process and classify without applying labels
 
 ### Notification
 
-- [ ] **NOTF-01**: Summary email notification sent to self after each run
-- [ ] **NOTF-02**: Statistics in summary email (per-category breakdown, error count, token usage estimate)
+- [x] **NOTF-01**: Summary email notification sent to self after each run
+- [x] **NOTF-02**: Statistics in summary email (per-category breakdown, error count, token usage estimate)
 
 ## v2 Requirements
 
@@ -115,13 +115,13 @@ Explicitly excluded. Documented to prevent scope creep.
 | LABL-03 | Phase 2 | Complete |
 | LABL-04 | Phase 2 | Complete |
 | OPS-06 | Phase 2 | Pending |
-| OPS-01 | Phase 3 | Pending |
+| OPS-01 | Phase 3 | Complete |
 | OPS-02 | Phase 3 | Complete |
-| OPS-03 | Phase 3 | Pending |
+| OPS-03 | Phase 3 | Complete |
 | OPS-04 | Phase 3 | Complete |
 | OPS-05 | Phase 3 | Complete |
-| NOTF-01 | Phase 3 | Pending |
-| NOTF-02 | Phase 3 | Pending |
+| NOTF-01 | Phase 3 | Complete |
+| NOTF-02 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 29 total
