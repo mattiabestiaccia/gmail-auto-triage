@@ -1,16 +1,22 @@
-"""CLI entry point orchestrating config -> auth -> fetch pipeline.
+"""CLI entry point orchestrating config -> auth -> fetch -> classify -> notify pipeline.
 
 Usage: uv run python -m email_triage [options]
+
+Cron-compatible: exits 0 on success, 1 on fatal error, 130 on interrupt.
+Logging to stderr (console) and optional JSON file. Per-email errors do not
+crash the batch -- they are accumulated and reported in the summary email.
 """
 
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 import time
 from datetime import datetime, timedelta, timezone
 
 from email_triage.auth import authenticate, get_gmail_service
+from email_triage.classifier import classify_email, create_genai_client
 from email_triage.config import load_config
 from email_triage.gmail import (
     fetch_messages_batch,
@@ -18,22 +24,19 @@ from email_triage.gmail import (
     filter_by_window,
     parse_message,
 )
-from email_triage.classifier import classify_email, create_genai_client
 from email_triage.labels import (
-    AMBIGUOUS_LABEL,
     apply_labels,
     ensure_label,
     is_already_triaged,
     list_triage_labels,
 )
+from email_triage.logging_setup import setup_logging
+from email_triage.models import RunStats
+from email_triage.notify import send_summary_email
 from email_triage.output import (
-    Colors,
     print_classification_result,
     print_classification_summary,
-    print_error,
-    print_info,
     print_progress,
-    print_success,
 )
 
 
@@ -80,31 +83,56 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Classify emails but do not apply labels in Gmail",
     )
+    parser.add_argument(
+        "--log-level",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR"],
+        default="INFO",
+        help="Logging level (default: INFO)",
+    )
+    parser.add_argument(
+        "--log-file",
+        default=None,
+        help="Path to JSON log file",
+    )
+    parser.add_argument(
+        "--no-notify",
+        action="store_true",
+        help="Skip summary email notification",
+    )
     return parser
 
 
 def main(args: list[str] | None = None) -> None:
-    """Run the full email triage fetch pipeline.
+    """Run the full email triage pipeline.
 
     Pipeline: load config -> authenticate -> fetch IDs -> batch fetch ->
-    parse -> filter by time window -> print summary.
+    parse -> filter by time window -> classify -> label -> notify.
+
+    Exit codes: 0 = success, 1 = fatal error, 130 = keyboard interrupt.
     """
     parser = _build_parser()
     parsed = parser.parse_args(args)
 
+    # Initialize logging
+    setup_logging(parsed.log_level, parsed.log_file)
+    logger = logging.getLogger("email_triage")
+
     start = time.monotonic()
+    stats = RunStats()
 
     try:
         # 1. Load config
-        print_info(f"Loading config from {parsed.config}...")
+        logger.info("Loading config from %s...", parsed.config)
         config = load_config(parsed.config)
         category_names = ", ".join(c.name for c in config.categories)
-        print_success(f"Loaded {len(config.categories)} categories: {category_names}")
+        logger.info(
+            "Loaded %d categories: %s", len(config.categories), category_names,
+        )
 
         # 2. Authenticate
         creds = authenticate(parsed.credentials, parsed.token)
         service = get_gmail_service(creds)
-        print_success("Connected to Gmail.")
+        logger.info("Connected to Gmail.")
 
         # 3. Calculate time window
         hours = parsed.window_hours or config.fetch.processing_window_hours
@@ -115,37 +143,48 @@ def main(args: list[str] | None = None) -> None:
         max_emails = parsed.max_emails or config.fetch.max_emails
 
         # 5. Fetch unread IDs
-        print_info(f"Fetching unread emails (window: {hours}h, max: {max_emails})...")
-        message_ids = fetch_unread_ids(service, max_results=max_emails, after_date=after_date)
+        logger.info(
+            "Fetching unread emails (window: %dh, max: %d)...", hours, max_emails,
+        )
+        message_ids = fetch_unread_ids(
+            service, max_results=max_emails, after_date=after_date,
+        )
 
         # 6. Handle empty result
         if not message_ids:
-            print_success(f"No unread emails found in the last {hours} hours.")
-            return
+            logger.info("No unread emails found in the last %d hours.", hours)
+            sys.exit(0)
 
-        print_info(f"Found {len(message_ids)} unread email(s). Fetching metadata...")
+        stats.total_fetched = len(message_ids)
+        logger.info(
+            "Found %d unread email(s). Fetching metadata...", len(message_ids),
+        )
 
         # 7. Fetch message metadata with progress
-        raw_messages, errors = fetch_messages_batch(
+        raw_messages, fetch_errors = fetch_messages_batch(
             service,
             message_ids,
             on_progress=lambda cur, tot: print_progress(cur, tot),
         )
+        stats.api_calls_gmail += 1  # batch fetch counts as 1 API call
 
         # 8. Parse and filter
-        emails = [parse_message(msg, config.fetch.snippet_length) for msg in raw_messages]
+        emails = [
+            parse_message(msg, config.fetch.snippet_length) for msg in raw_messages
+        ]
         filtered = filter_by_window(emails, raw_messages, hours)
 
         if not filtered:
-            print_success("No emails to classify after time filter.")
-            return
+            logger.info("No emails to classify after time filter.")
+            sys.exit(0)
 
         # 9. Initialize GenAI client
         client = create_genai_client()
-        print_success("Gemini client ready.")
+        logger.info("Gemini client ready.")
 
         # 10. Load label cache and filter already-triaged emails
         label_cache = list_triage_labels(service)
+        stats.api_calls_gmail += 1
         triage_label_ids = set(label_cache.values())
         to_classify = []
         skipped = 0
@@ -155,31 +194,38 @@ def main(args: list[str] | None = None) -> None:
             else:
                 to_classify.append(email)
 
-        if not to_classify:
-            print_success(f"All {skipped} emails already triaged. Nothing to do.")
-            return
+        stats.skipped_triaged = skipped
 
-        print_info(
-            f"{len(to_classify)} emails to classify "
-            f"({skipped} already triaged, skipped)."
+        if not to_classify:
+            logger.info(
+                "All %d emails already triaged. Nothing to do.", skipped,
+            )
+            sys.exit(0)
+
+        logger.info(
+            "%d emails to classify (%d already triaged, skipped).",
+            len(to_classify), skipped,
         )
 
         # 11. Classify each email with delay between calls
-        classified = 0
-        ambiguous = 0
-        errors_count = 0
         total = len(to_classify)
 
         for i, email in enumerate(to_classify):
-            print_info(f"Classifying {i + 1}/{total}...")
+            logger.info("Classifying %d/%d...", i + 1, total)
             try:
                 result = classify_email(
                     client, email, config.categories, config.classification,
                 )
+                stats.api_calls_llm += 1
+
                 if result.is_ambiguous:
-                    ambiguous += 1
+                    stats.ambiguous += 1
                 else:
-                    classified += 1
+                    stats.classified += 1
+                    for cat_name, _conf in result.categories:
+                        stats.categories[cat_name] = (
+                            stats.categories.get(cat_name, 0) + 1
+                        )
 
                 # Per-email output in verbose or dry-run mode
                 if parsed.verbose or parsed.dry_run:
@@ -191,7 +237,9 @@ def main(args: list[str] | None = None) -> None:
                 # 12. Apply labels (skip if dry-run)
                 if not parsed.dry_run:
                     if result.is_ambiguous:
-                        label_id = ensure_label(service, "_Ambiguous", label_cache)
+                        label_id = ensure_label(
+                            service, "_Ambiguous", label_cache,
+                        )
                         apply_labels(service, email.id, [label_id])
                     else:
                         label_ids = [
@@ -199,37 +247,57 @@ def main(args: list[str] | None = None) -> None:
                             for cat_name, _conf in result.categories
                         ]
                         apply_labels(service, email.id, label_ids)
+                    stats.api_calls_gmail += 1
 
             except Exception as exc:
-                errors_count += 1
-                print_error(
-                    f"Failed to classify '{email.subject[:50]}': {exc}",
+                stats.errors += 1
+                detail = f"Failed to process '{email.subject[:50]}': {exc}"
+                stats.error_details.append(detail[:200])
+                logger.error(
+                    "Failed to process '%s': %s", email.subject[:50], exc,
                 )
 
             # Rate-limiting delay (skip after last email)
             if i < total - 1:
                 time.sleep(4)
 
-        # 13. Classification summary
+        # 13. Record elapsed time
         elapsed = time.monotonic() - start
+        stats.elapsed_seconds = elapsed
+
+        # 14. Classification summary (console output for TTY users)
         print_classification_summary(
-            classified, ambiguous, skipped, parsed.dry_run, elapsed,
+            stats.classified, stats.ambiguous, stats.skipped_triaged,
+            parsed.dry_run, elapsed,
         )
 
+        # 15. Log warnings for errors
+        if stats.errors > 0:
+            logger.warning(
+                "%d email(s) failed to process during this run.", stats.errors,
+            )
+
+        # 16. Send summary email (best-effort)
+        should_notify = (
+            not parsed.no_notify
+            and not parsed.dry_run
+            and (stats.classified + stats.ambiguous + stats.errors > 0)
+        )
+        if should_notify:
+            try:
+                msg_id = send_summary_email(service, stats)
+                logger.info("Summary email sent (ID: %s)", msg_id)
+            except Exception as exc:
+                logger.warning("Failed to send summary email: %s", exc)
+
+        sys.exit(0)
+
     except KeyboardInterrupt:
-        print("\nInterrupted.")
+        logger.info("Interrupted by user.")
         sys.exit(130)
-    except Exception as e:
-        # Check for Google auth refresh errors
-        err_type = type(e).__name__
-        if "RefreshError" in err_type:
-            print_error(
-                "Token refresh failed",
-                suggestion=f"Delete {parsed.token} and re-run to re-authenticate",
-            )
-        else:
-            print_error(
-                str(e),
-                suggestion="Run with --verbose for details" if not parsed.verbose else None,
-            )
+    except SystemExit:
+        # Re-raise SystemExit so it propagates (e.g., from create_genai_client)
+        raise
+    except Exception as exc:
+        logger.exception("Fatal error: %s", exc)
         sys.exit(1)
