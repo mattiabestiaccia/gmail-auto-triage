@@ -97,9 +97,9 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Path to JSON log file",
     )
     parser.add_argument(
-        "--no-notify",
+        "--notify",
         action="store_true",
-        help="Skip summary email notification",
+        help="Send summary email notification after each run (disabled by default)",
     )
     return parser
 
@@ -287,7 +287,7 @@ def main(args: list[str] | None = None) -> None:
 
         # 16. Send summary email (best-effort)
         should_notify = (
-            not parsed.no_notify
+            parsed.notify
             and not parsed.dry_run
             and (stats.classified + stats.ambiguous + stats.errors > 0)
         )
