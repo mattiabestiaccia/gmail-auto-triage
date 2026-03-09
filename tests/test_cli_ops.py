@@ -146,7 +146,7 @@ class TestErrorResilience:
         call_count = {"classify": 0}
         results_collected = []
 
-        def classify_side_effect(client, email, cats, cfg_cls):
+        def classify_side_effect(client, email, cats, cfg_cls, fields=None):
             call_count["classify"] += 1
             if email.id == "m2":
                 raise RuntimeError("LLM API timeout")

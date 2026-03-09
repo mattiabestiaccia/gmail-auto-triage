@@ -12,6 +12,7 @@ import logging
 from datetime import datetime, timezone
 from email.message import EmailMessage
 
+from email_triage.gmail import _execute_with_retry
 from email_triage.models import RunStats
 
 logger = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ def get_user_email(service) -> str:
     Returns:
         The user's email address string.
     """
-    profile = service.users().getProfile(userId="me").execute()
+    profile = _execute_with_retry(service.users().getProfile(userId="me"))
     return profile["emailAddress"]
 
 
@@ -203,11 +204,8 @@ def send_summary_email(service, stats: RunStats) -> str | None:
     # Base64url encode for Gmail API
     raw = base64.urlsafe_b64encode(msg.as_bytes()).decode("ascii")
 
-    result = (
-        service.users()
-        .messages()
-        .send(userId="me", body={"raw": raw})
-        .execute()
+    result = _execute_with_retry(
+        service.users().messages().send(userId="me", body={"raw": raw})
     )
 
     message_id = result.get("id", "unknown")

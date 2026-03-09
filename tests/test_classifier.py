@@ -225,6 +225,18 @@ class TestBuildClassificationPrompt:
         # Belt-and-suspenders: prompt must mention 1-2 category limit
         assert "1" in prompt and "2" in prompt
 
+    def test_fields_subset_excludes_other_fields(
+        self,
+        sample_email: EmailData,
+        category_configs: list[CategoryConfig],
+    ) -> None:
+        """fields parameter controls which email fields appear in the prompt."""
+        prompt = build_classification_prompt(
+            sample_email, category_configs, fields=["sender"],
+        )
+        assert "digest@python.org" in prompt  # sender included
+        assert "This week in Python" not in prompt  # snippet excluded
+
 
 # ---------------------------------------------------------------------------
 # ClassificationConfig tests

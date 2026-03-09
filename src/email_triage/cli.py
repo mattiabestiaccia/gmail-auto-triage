@@ -26,6 +26,7 @@ from email_triage.gmail import (
 )
 from email_triage.labels import (
     AMBIGUOUS_CATEGORY,
+    AMBIGUOUS_LABEL,
     apply_labels,
     ensure_label,
     is_already_triaged,
@@ -216,6 +217,7 @@ def main(args: list[str] | None = None) -> None:
             try:
                 result = classify_email(
                     client, email, config.categories, config.classification,
+                    config.fetch.fields,
                 )
                 stats.api_calls_llm += 1
                 stats.token_usage_prompt += result.prompt_tokens
@@ -244,6 +246,9 @@ def main(args: list[str] | None = None) -> None:
                             service, AMBIGUOUS_CATEGORY, label_cache,
                         )
                         apply_labels(service, email.id, [label_id])
+                        logger.debug(
+                            "Labeled '%s' as %s", email.subject[:50], AMBIGUOUS_LABEL,
+                        )
                     else:
                         label_ids = [
                             ensure_label(service, cat_name, label_cache)

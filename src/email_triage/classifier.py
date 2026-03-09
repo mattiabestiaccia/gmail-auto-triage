@@ -30,6 +30,13 @@ from email_triage.models import (
 
 logger = logging.getLogger(__name__)
 
+# Maps EmailData field names to display labels in the classification prompt
+_EMAIL_FIELD_LABELS: dict[str, str] = {
+    "sender": "From",
+    "subject": "Subject",
+    "snippet": "Snippet",
+}
+
 # System instruction for the Gemini Flash classifier
 _SYSTEM_INSTRUCTION = (
     "You are an email classifier. Assign each email to 1-2 categories "
@@ -71,18 +78,35 @@ def create_genai_client() -> genai.Client:
 def build_classification_prompt(
     email: EmailData,
     categories: list[CategoryConfig],
+    fields: list[str] | None = None,
 ) -> str:
     """Build classification prompt with category context and email fields.
 
     Includes category names, descriptions, examples from config,
-    and email sender, subject, snippet. Explicitly instructs
-    "assign 1 or 2 categories maximum" (belt-and-suspenders with schema).
+    and the email fields requested via `fields` (defaults to sender,
+    subject, snippet). Explicitly instructs "assign 1 or 2 categories
+    maximum" (belt-and-suspenders with schema).
+
+    Args:
+        email: Email to classify.
+        categories: Category definitions from config.
+        fields: Ordered list of EmailData field names to include in the
+            prompt. Valid values: "sender", "subject", "snippet".
+            Defaults to all three in that order.
     """
+    if fields is None:
+        fields = ["sender", "subject", "snippet"]
     category_section = "\n".join(
         f"- **{cat.name}**: {cat.description}\n"
         f"  Examples: {', '.join(cat.examples)}"
         for cat in categories
     )
+    email_lines = [
+        f"{_EMAIL_FIELD_LABELS[f]}: {getattr(email, f, '')}"
+        for f in fields
+        if f in _EMAIL_FIELD_LABELS
+    ]
+    email_section = "\n".join(email_lines)
     return f"""Classify this email into 1 or 2 of the following categories.
 Return confidence scores (0.0-1.0) for each assigned category.
 Assign 1 or 2 categories maximum.
@@ -102,9 +126,7 @@ IMPORTANT RULES:
 {category_section}
 
 ## Email to Classify
-From: {email.sender}
-Subject: {email.subject}
-Snippet: {email.snippet}
+{email_section}
 
 Classify this email. Assign only categories that genuinely apply.
 If unsure, use lower confidence scores."""
@@ -152,6 +174,7 @@ def classify_email(
     email: EmailData,
     categories: list[CategoryConfig],
     config: ClassificationConfig,
+    fields: list[str] | None = None,
 ) -> ClassificationResult:
     """Classify a single email using Gemini Flash.
 
@@ -169,7 +192,7 @@ def classify_email(
         ClassificationResult with matched categories, reasoning,
         and is_ambiguous flag.
     """
-    prompt = build_classification_prompt(email, categories)
+    prompt = build_classification_prompt(email, categories, fields)
     valid_names = [cat.name for cat in categories]
 
     response = _generate_content_with_retry(

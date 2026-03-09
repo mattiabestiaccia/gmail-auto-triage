@@ -3,6 +3,8 @@ phase: 02-classification
 plan: 03
 subsystem: cli-pipeline
 tags: [cli, dry-run, pipeline-integration, rate-limiting, idempotency]
+requirements_completed:
+  - OPS-06
 ---
 
 ## What Was Built
