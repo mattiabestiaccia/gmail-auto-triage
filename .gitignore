@@ -13,6 +13,10 @@ dist/
 # Virtual environment
 .venv/
 
+# Logs
+*.log
+err.log
+
 # Eval data (contains real email IDs/content)
 testset.json
 eval_golden_set.json

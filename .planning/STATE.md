@@ -55,7 +55,7 @@ None.
 
 ### Blockers/Concerns
 
-- OAuth2 consent screen deve essere "Published" (non "Testing") prima del deploy su cron — refresh token scade dopo 7 giorni in Testing mode
+None.
 
 ## Session Continuity
 
