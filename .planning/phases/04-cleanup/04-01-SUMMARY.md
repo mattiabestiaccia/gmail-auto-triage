@@ -74,7 +74,7 @@ Each task was committed atomically:
 1. **Task 1: Token usage extraction, AMBIGUOUS_CATEGORY constant, dead code removal** - `0ea2a66` (feat)
 2. **Task 2: Fix test isolation and update test mocks** - `724d5b6` (test)
 
-**Plan metadata:** TBD (docs: complete plan)
+**Plan metadata:** `bdbad30` (docs: complete plan)
 
 ## Files Created/Modified
 - `src/email_triage/models.py` - Added prompt_tokens and completion_tokens fields to ClassificationResult
